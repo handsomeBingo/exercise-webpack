@@ -51,4 +51,4 @@
     15.1 设置图片的输出目录是在 url-loader options 设置 outputPath；css 文件是在压缩 CSS 插件的 filename 中设置前面有路径名；
     15.2 在 output 选项中设置 publicPath 配置 CDN 域名，会为所有引用资源的 url 前面添加上公共域名
 
-
+## 16.
