@@ -1,0 +1,30 @@
+/*! 发上等愿，结中等缘，享下等福；择高处立，寻平处住，想宽处行 */
+div {
+  color: #fff;
+  background: deeppink;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+
+
+body {
+  background: #000;
+}
+body a {
+  color: aqua;
+}
+body div {
+  margin-top: 100px;
+  display: inline-block;
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
+  color: deepskyblue;
+}
+body p {
+  width: 100px;
+  height: 100px;
+  background: url(/img/5d6465ac1fb1cf12c438faa78f077bd7.jpeg);
+  color: #fff;
+}
+

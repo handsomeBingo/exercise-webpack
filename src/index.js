@@ -12,6 +12,10 @@ import './index.css';
 
 import './index.less'
 
+import x from './x.js'
+
+console.log(x.b)
+
 let a = () => {
   console.log('arrow function')
 };
@@ -51,3 +55,4 @@ let vm = new Vue(components);
 vm.$mount('#root-vue');
 
 /* vue code end*/
+

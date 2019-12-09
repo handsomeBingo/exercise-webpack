@@ -13,18 +13,24 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 
 module.exports = {
-  entry: './src/index.js',
-  // mode: 'development',
-  mode: 'production',
+  // entry: './src/index.js',
+  mode: 'development',
+  // mode: 'production',
+  devtool: 'eval-source-map',
+  entry: {
+    home: './src/index.js',
+    other: './src/other.js',
+    x: './src/x.js'
+  },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js'
+    filename: '[name].[hash].js' // 配合多页面应用 [name] 表示文件名，  [hash:5] 生成文件名后跟随 5 位 hash 戳记
   },
   devServer: {
     // 开发服务器的配置
     contentBase: './dist', // 静态资源文件目录
-    port: 3000, // 开发服务器启动的端口
-    // open: true, // 是否自动启动浏览器
+    port: 8080, // 开发服务器启动的端口
+    open: true, // 是否自动启动浏览器
     progress: true, // 进度条
     proxy: { // 配置代理
       '/api': { // 将带有 /api 的请求，转发值 target 指向的域名
@@ -89,13 +95,14 @@ module.exports = {
   },
   plugins: [
     new HTMLWebpackPlugin({
-      template: './src/index.html', // 需要引入输出文件的 html 文件模板
-      hash: true, // 给引入的 js 加hash
-      filename: 'index.html', // 输出的 html 文件的名字（插件会把模板 html 复制到输出目录中）
-      minify: { // 压缩优化输出的 html 文件配置
-        removeAttributeQuotes: true, // 删除行内属性的双引号
-        collapseWhitespace: true // 删除换行，使内容保持在一行
-      }
+      template: './src/index.html',
+      filename: "index.html",
+      chunks: ['home']
+    }),
+    new HTMLWebpackPlugin({
+      template: './src/other.html',
+      filename: "other.html",
+      chunks: ['other']
     }),
     // 抽离 css 文件
     new MiniCSSExtractPlugin({
@@ -138,7 +145,23 @@ module.exports = {
         parallel: true, // 是否并发打包
         sourceMap: true // 是否开启 sourceMap
       })
-    ]
+    ],
+    splitChunks: { // 拆分代码 webpack4.x 以后用此功能代替之前的 CommonChunksPlugin
+      cacheGroups: { // 缓存组
+        common: {
+          chunks: 'initial', // 标识哪些模块会被优化
+          minSize: 0, // 打包后的代码超过该限制后的代码块会被提取成为公共模块，如果不超过该限制还是会打包到代码中，不会成为单独的模块
+          minChunks: 2, // 代码块被会被提取成公共模块需要被引用的最小次数
+        },
+        vendors: { // 提取第三方代码
+          priority: 1, // 优先级，优先提取第三方代码
+          test: /node_modules/,
+          chunks: 'initial',
+          minSize: 0,
+          minChunks: 2
+        }
+      }
+    }
   },
 
   // 配置 externals
