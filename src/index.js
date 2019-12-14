@@ -1,12 +1,16 @@
 import $ from 'jquery' // 使用 expose-loader 暴露 $ 到 全局；
 
+import 'bootstrapCss'
+
 import Vue from 'vue'
 
 import React from 'react'
+
+import { x2, y2 } from './sthjs/b'
+
 import { render } from 'react-dom'
 
 import './sthjs/a.js'
-import './sthjs/b.js'
 
 import './index.css';
 
@@ -14,7 +18,9 @@ import './index.less'
 
 import x from './x.js'
 
-console.log(x.b)
+import './test-hmr'
+
+console.log(y2)
 
 let a = () => {
   console.log('arrow function')
@@ -56,3 +62,17 @@ vm.$mount('#root-vue');
 
 /* vue code end*/
 
+async function renderX(e) {
+  let p = await import('./test-hmr')
+  console.log(p)
+  let getP = document.getElementById('px1');
+  if (getP) return getP.innerText = p.p;
+  let newP = document.createElement('p');
+  newP.innerText = p.p;
+  newP.id = 'px1';
+  document.body.appendChild(newP);
+}
+renderX();
+if (module.hot) {
+  module.hot.accept('./test-hmr', renderX)
+}

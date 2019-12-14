@@ -14,8 +14,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   // entry: './src/index.js',
-  mode: 'development',
-  // mode: 'production',
+  // mode: 'development',
+  mode: 'production',
   devtool: 'eval-source-map',
   entry: {
     home: './src/index.js',
@@ -28,8 +28,9 @@ module.exports = {
   },
   devServer: {
     // 开发服务器的配置
+    hot: true, // 启用 HMR
     contentBase: './dist', // 静态资源文件目录
-    port: 8080, // 开发服务器启动的端口
+    port: 8081, // 开发服务器启动的端口
     open: true, // 是否自动启动浏览器
     progress: true, // 进度条
     proxy: { // 配置代理
@@ -74,12 +75,14 @@ module.exports = {
         ]
       },
       {
-        test: /\.(jpeg|png|jpg)$/,
+        test: /\.(jpeg|png|jpg|ttf|woff(\d?)|eot|svg)$/,
         use: {
           loader: 'url-loader',
           options: {
             limit: 5 * 1024,
-            outputPath: '/img/'
+            outputPath: 'img/',
+            name: '[name].[hash:5].[ext]',
+            publicPath: '/img/' // 这个 publicPath 可以解决 css 文件中的图片使用相对路径引用时报错的问题，这是因为这个东西会在 图片的引用路径前面拼接这个 publicPath
           }
         }
       },
@@ -97,12 +100,12 @@ module.exports = {
     new HTMLWebpackPlugin({
       template: './src/index.html',
       filename: "index.html",
-      chunks: ['home']
+      trunks: ['home']
     }),
     new HTMLWebpackPlugin({
       template: './src/other.html',
       filename: "other.html",
-      chunks: ['other']
+      trunks: ['other']
     }),
     // 抽离 css 文件
     new MiniCSSExtractPlugin({
@@ -145,23 +148,16 @@ module.exports = {
         parallel: true, // 是否并发打包
         sourceMap: true // 是否开启 sourceMap
       })
-    ],
-    splitChunks: { // 拆分代码 webpack4.x 以后用此功能代替之前的 CommonChunksPlugin
-      cacheGroups: { // 缓存组
-        common: {
-          chunks: 'initial', // 标识哪些模块会被优化
-          minSize: 0, // 打包后的代码超过该限制后的代码块会被提取成为公共模块，如果不超过该限制还是会打包到代码中，不会成为单独的模块
-          minChunks: 2, // 代码块被会被提取成公共模块需要被引用的最小次数
-        },
-        vendors: { // 提取第三方代码
-          priority: 1, // 优先级，优先提取第三方代码
-          test: /node_modules/,
-          chunks: 'initial',
-          minSize: 0,
-          minChunks: 2
-        }
-      }
-    }
+    ]
+  },
+
+  // 模块解析规则
+  resolve: {
+    alias: {
+      bootstrapCss: 'bootstrap/dist/css/bootstrap.min.css'
+    },
+    extensions: ['.js', '.css', '.json', '.vue'],
+    modules: [path.resolve('node_modules')] // 设置 webpack 从当前目录下的 node_modules 查找
   },
 
   // 配置 externals
