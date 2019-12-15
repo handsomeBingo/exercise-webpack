@@ -11,8 +11,6 @@ const webpack= require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-const Happypack = require('happypack');
-
 
 module.exports = {
   // entry: './src/index.js',
@@ -45,24 +43,19 @@ module.exports = {
   },
   module: {
     rules: [
-      // {
-      //   test: /\.(js|jsx)$/,
-      //   use: {
-      //     loader: 'babel-loader',
-      //     options: {
-      //       presets: ['@babel/preset-env', '@babel/preset-react'],
-      //       plugins: [
-      //         ['@babel/plugin-proposal-decorators', { legacy: true }], // 使用装饰器
-      //         ['@babel/plugin-proposal-class-properties', { loose: true }], // 使用 class-properties
-      //         ['@babel/plugin-transform-runtime'] // 使用 async/await/generator
-      //       ]
-      //     }
-      //   },
-      //   exclude: /node_modules/
-      // },
       {
         test: /\.(js|jsx)$/,
-        use: 'happypack/loader?id=js', // 使用 happypack 时，需要将 loader 改成 'happypack/loader?id=xx' 这个 xx 是一个标识符，下面的 plugin 还需要用
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env', '@babel/preset-react'],
+            plugins: [
+              ['@babel/plugin-proposal-decorators', { legacy: true }], // 使用装饰器
+              ['@babel/plugin-proposal-class-properties', { loose: true }], // 使用 class-properties
+              ['@babel/plugin-transform-runtime'] // 使用 async/await/generator
+            ]
+          }
+        },
         exclude: /node_modules/
       },
       {
@@ -148,26 +141,7 @@ module.exports = {
     // 使用 DLL：配置 manifest 文件的位置
     new webpack.DllReferencePlugin({
       manifest: path.resolve(__dirname, 'dist', 'manifest.json')
-    }),
-
-    // 使用 happypack 多线程打包 js
-    new Happypack({
-      id: 'js', // 这个 'js' 就是上面配置 loader 时，写在 happypack/loader?id=js 中的 js
-      use: [
-        {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],
-            plugins: [
-              ['@babel/plugin-proposal-decorators', { legacy: true }], // 使用装饰器
-              ['@babel/plugin-proposal-class-properties', { loose: true }], // 使用 class-properties
-              ['@babel/plugin-transform-runtime'] // 使用 async/await/generator
-            ]
-          }
-        }
-      ]
     })
-
   ],
 
   // 配置优化配置项

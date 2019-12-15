@@ -4,15 +4,13 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "webpack-dev-server",
-    "build": "npm run build-react && webpack",
-    "build-react": "webpack --config ./webpack.react.config.js"
+    "dev": "webpack-dev-server --config ./config/webpack.dev.config.js",
+    "build": "webpack --config ./config/webpack.prod.config.js"
   },
   "devDependencies": {
     "autoprefixer": "^9.7.3",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^5.0.5",
-    "happypack": "^5.0.1",
     "html-webpack-plugin": "^3.2.0",
     "html-withimg-loader": "^0.1.16",
     "less-loader": "^5.0.0",
